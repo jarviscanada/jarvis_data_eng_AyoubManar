@@ -150,7 +150,8 @@ rocky:linux_sql [feature/monitoring_agent] $ crontab -l
 ---
 
 
-##Architecture
+## Architecture
+
 ![Architecture du Cluster](./assets/architecture.png)
 
 Each Linux host in the cluster runs two monitoring agents that operate independently. On first deployment, host_info.sh collects static hardware metadata from the local machine using system commands (lscpu, /proc/cpuinfo, vmstat) and issues a single INSERT statement to the centralized database via the psql CLI. Subsequently, host_usage.sh executes every minute under crontab automation, capturing live resource metrics and appending a timestamped row to the host_usage table, with the source host resolved by a foreign key lookup on its fully qualified hostname. All three nodes converge on a single PostgreSQL instance running inside a Docker container (jrvs-psql), with data persisted to a named volume (pgdata) that survives container restarts and removals. The diagram above  saved under /assets  illustrates the full three-node topology, the per-host agent model, the crontab scheduling layer, and the containerized database sink.
@@ -158,7 +159,8 @@ Each Linux host in the cluster runs two monitoring agents that operate independe
 ---
 
 
-##Scripts
+## Scripts
+
 psql_docker.sh
 Provisions, starts, or stops the jrvs-psql Docker container running PostgreSQL 9.6. Validates Docker service availability before any operation and returns descriptive error messages on invalid state transitions (e.g., attempting to create an already-existing container).
 
@@ -206,10 +208,12 @@ Contains analytical SQL queries targeting the host_agent database. Business obje
 psql -h localhost -U postgres -d host_agent -f sql/queries.sql
 
 ```
+
 ---
 
 
-##Database Modeling
+## Database Modeling
+
 Table: host_info
 Stores static hardware specifications collected once per host at provisioning time.
 
@@ -238,7 +242,8 @@ disk_available	INT4	NOT NULL	Available disk space on / in MB
 ---
 
 
-##Test
+## Test
+
 Script correctness and data integrity were validated through a combination of manual execution and database inspection.
 
 Step 1  Script Execution Validation: Each script was executed directly from the terminal with explicit arguments and its exit code verified via echo $?. A return code of 0 confirmed successful execution; non-zero codes triggered investigation of the error path.
@@ -248,14 +253,17 @@ Step 2  Data Insertion Verification: Immediately after running host_info.sh and 
 Step 3  Crontab Continuity Check: After configuring the crontab job, the /tmp/host_usage.log file was monitored over a 5-minute window to confirm that a new row was appended to host_usage at each scheduled interval, with incrementing timestamps and no error output.
 
 -Résultat de host_info :
- ![Résultat de host_info](./assets/test_host_info.png)
+
+![Résultat de host_info](./assets/test_host_info.png)
 
 -Résultat de host_usage :
- ![Résultat de host_usage](./assets/test_host_usage.png)
+
+![Résultat de host_usage](./assets/test_host_usage.png)
 
 ---
 
-##Deployment
+## Deployment
+
 The deployment model relies on two complementary mechanisms: Docker for infrastructure isolation and crontab for process automation.
 
 The PostgreSQL instance is provisioned as a Docker container (jrvs-psql) using the postgres:9.6-alpine image. A dedicated named volume (pgdata) is mounted to /var/lib/postgresql/data inside the container, decoupling data persistence from the container lifecycle. This means the database contents survive container stops, restarts, and even recreation without data loss. The container is exposed on port 5432, making it accessible to all agents on the same host network.
@@ -267,7 +275,8 @@ Source code is version-controlled on GitHub following the GitFlow branching stra
 ---
 
 
-##Improvements
+## Improvements
+
 -Network Resilience and Error Handling: The current scripts exit on any psql connection failure without retry logic. A production-grade implementation would incorporate exponential backoff retries, distinguish between transient network timeouts and permanent credential failures, and emit structured error logs to a centralized logging sink (e.g., syslog or a log aggregation platform).
 
 -Multi-Node Distributed Deployment: The agent is presently deployed manually on each host. Scaling to a large cluster would benefit from an orchestration layer  such as an Ansible playbook or a shell-based provisioning script  that automatically installs, configures, and verifies host_info.sh and the crontab entry across all nodes via SSH, using a shared inventory file.

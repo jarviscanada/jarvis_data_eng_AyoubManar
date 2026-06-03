@@ -25,7 +25,7 @@ The architecture is agent-based. Each node in the cluster runs a pair of Bash sc
 ```
 
 
-Proof of execution:
+####Proof of execution:
 
 ```bash
 rocky:linux_sql [feature/monitoring_agent] $ ./scripts/psql_docker.sh create
@@ -56,7 +56,7 @@ psql -h localhost -U postgres -c "CREATE DATABASE host_agent;"
 psql -h localhost -U postgres -d host_agent -f sql/ddl.sql
 ```
 
-Proof of execution:
+####Proof of execution:
 
 ```bash
 rocky:linux_sql [feature/monitoring_agent] $ psql -h localhost -U postgres -d host_agent -c "\dt"
@@ -75,7 +75,7 @@ Password for user postgres:
 # Example
 ./scripts/host_info.sh localhost 5432 host_agent postgres password
 ```
-Proof of execution:
+####Proof of execution:
 
 ```bash
 rocky:linux_sql [feature/monitoring_agent] $ psql -h localhost -U postgres -d host_agent -c "SELECT * FROM host_info;"
@@ -94,7 +94,7 @@ bash scripts/host_usage.sh <psql_host> <psql_port> <db_name> <psql_user> <psql_p
 # Example
 bash scripts/host_usage.sh localhost 5432 host_agent postgres password
 ```
-Proof of execution:
+####Proof of execution:
 
 ```bash
 15:48:00 rocky:linux_sql [feature/monitoring_agent] $ psql -h localhost -U postgres -d host_agent -c "SELECT * FROM host_usage;"
@@ -139,19 +139,19 @@ crontab -e
 # Verify the scheduled job
 crontab -l
 ```
-Proof of execution:
+####Proof of execution:
 
 ```bash
 rocky:linux_sql [feature/monitoring_agent] $ crontab -l
 * * * * * bash /home/rocky/dev/jarvis_data_eng_AyoubManar/linux_sql/scripts/host_usage.sh localhost 5432 host_agent postgres password > /tmp/host_usage.log 2>&1
 ```
 
-Architecture
-[Architecture du Cluster](./assets/architecture.png)
+##Architecture
+ [Architecture du Cluster](./assets/architecture.png)
 
 Each Linux host in the cluster runs two monitoring agents that operate independently. On first deployment, host_info.sh collects static hardware metadata from the local machine using system commands (lscpu, /proc/cpuinfo, vmstat) and issues a single INSERT statement to the centralized database via the psql CLI. Subsequently, host_usage.sh executes every minute under crontab automation, capturing live resource metrics and appending a timestamped row to the host_usage table, with the source host resolved by a foreign key lookup on its fully qualified hostname. All three nodes converge on a single PostgreSQL instance running inside a Docker container (jrvs-psql), with data persisted to a named volume (pgdata) that survives container restarts and removals. The diagram above  saved under /assets  illustrates the full three-node topology, the per-host agent model, the crontab scheduling layer, and the containerized database sink.
 
-Scripts
+##Scripts
 psql_docker.sh
 Provisions, starts, or stops the jrvs-psql Docker container running PostgreSQL 9.6. Validates Docker service availability before any operation and returns descriptive error messages on invalid state transitions (e.g., attempting to create an already-existing container).
 
@@ -164,7 +164,7 @@ Provisions, starts, or stops the jrvs-psql Docker container running PostgreSQL 9
 ./scripts/psql_docker.sh start
 ./scripts/psql_docker.sh stop
 ```
-host_info.sh
+-host_info.sh
 Collects static hardware specifications from the local host (CPU count, architecture, model, clock speed, L2 cache, total memory, hostname) and inserts a single record into the host_info table. Intended to run once per node at provisioning time.
 
 ```bash
@@ -174,7 +174,7 @@ Collects static hardware specifications from the local host (CPU count, architec
 # Example
 ./scripts/host_info.sh localhost 5432 host_agent postgres password
 ```
-host_usage.sh
+-host_usage.sh
 Captures real-time resource metrics (free memory, CPU idle/kernel percentages, disk I/O operations, available disk space) and appends a timestamped record to the host_usage table. Designed to run every minute via crontab.
 
 ```bash
@@ -184,21 +184,21 @@ bash scripts/host_usage.sh <psql_host> <psql_port> <db_name> <psql_user> <psql_p
 # Example
 bash scripts/host_usage.sh localhost 5432 host_agent postgres password
 ```
-crontab configuration
+-crontab configuration
 Schedules host_usage.sh for continuous, unattended execution at one-minute intervals, redirecting output to a log file for operational traceability.
 
 ```bash
 # Crontab entry
 * * * * * bash /home/rocky/dev/jarvis_data_eng_<your_name>/linux_sql/scripts/host_usage.sh localhost 5432 host_agent postgres password > /tmp/host_usage.log 2>&1
 ```
-queries.sql
+-queries.sql
 Contains analytical SQL queries targeting the host_agent database. Business objectives include detecting nodes with memory usage anomalies, identifying underutilized hosts for workload rebalancing, and computing average CPU idle time per node over a rolling time window.
 
 ```bash
 # Execute queries against the host_agent database
 psql -h localhost -U postgres -d host_agent -f sql/queries.sql
 ```
-Database Modeling
+##Database Modeling
 Table: host_info
 Stores static hardware specifications collected once per host at provisioning time.
 
@@ -223,7 +223,7 @@ cpu_idle	INT2	NOT NULL	CPU idle time as a percentage
 cpu_kernel	INT2	NOT NULL	CPU time spent in kernel mode (%)
 disk_io	INT4	NOT NULL	Number of disk I/O operations in progress
 disk_available	INT4	NOT NULL	Available disk space on / in MB
-Test
+##Test
 Script correctness and data integrity were validated through a combination of manual execution and database inspection.
 
 Step 1  Script Execution Validation: Each script was executed directly from the terminal with explicit arguments and its exit code verified via echo $?. A return code of 0 confirmed successful execution; non-zero codes triggered investigation of the error path.
@@ -232,13 +232,13 @@ Step 2  Data Insertion Verification: Immediately after running host_info.sh and 
 
 Step 3  Crontab Continuity Check: After configuring the crontab job, the /tmp/host_usage.log file was monitored over a 5-minute window to confirm that a new row was appended to host_usage at each scheduled interval, with incrementing timestamps and no error output.
 
-Résultat de host_info :
-https://./assets/test_host_info.png ![Résultat de host_info](./assets/test_host_info.png)
+-Résultat de host_info :
+ ![Résultat de host_info](./assets/test_host_info.png)
 
-Résultat de host_usage :
-https://./assets/test_host_usage.png ![Résultat de host_usage](./assets/test_host_usage.png)
+-Résultat de host_usage :
+ ![Résultat de host_usage](./assets/test_host_usage.png)
 
-Deployment
+##Deployment
 The deployment model relies on two complementary mechanisms: Docker for infrastructure isolation and crontab for process automation.
 
 The PostgreSQL instance is provisioned as a Docker container (jrvs-psql) using the postgres:9.6-alpine image. A dedicated named volume (pgdata) is mounted to /var/lib/postgresql/data inside the container, decoupling data persistence from the container lifecycle. This means the database contents survive container stops, restarts, and even recreation without data loss. The container is exposed on port 5432, making it accessible to all agents on the same host network.
@@ -247,9 +247,9 @@ The host_info.sh script is executed once manually on each node after initial pro
 
 Source code is version-controlled on GitHub following the GitFlow branching strategy: feature branches are developed in isolation, merged into develop after code review, and promoted to main upon release.
 
-Improvements
-Network Resilience and Error Handling: The current scripts exit on any psql connection failure without retry logic. A production-grade implementation would incorporate exponential backoff retries, distinguish between transient network timeouts and permanent credential failures, and emit structured error logs to a centralized logging sink (e.g., syslog or a log aggregation platform).
+##Improvements
+-Network Resilience and Error Handling: The current scripts exit on any psql connection failure without retry logic. A production-grade implementation would incorporate exponential backoff retries, distinguish between transient network timeouts and permanent credential failures, and emit structured error logs to a centralized logging sink (e.g., syslog or a log aggregation platform).
 
-Multi-Node Distributed Deployment: The agent is presently deployed manually on each host. Scaling to a large cluster would benefit from an orchestration layer  such as an Ansible playbook or a shell-based provisioning script  that automatically installs, configures, and verifies host_info.sh and the crontab entry across all nodes via SSH, using a shared inventory file.
+-Multi-Node Distributed Deployment: The agent is presently deployed manually on each host. Scaling to a large cluster would benefit from an orchestration layer  such as an Ansible playbook or a shell-based provisioning script  that automatically installs, configures, and verifies host_info.sh and the crontab entry across all nodes via SSH, using a shared inventory file.
 
-Threshold-Based Alerting: The system currently stores metrics passively without triggering any notifications. Integrating a lightweight alerting mechanism  for example, a queries.sql job executed periodically that detects when memory_free drops below a defined threshold or cpu_idle falls under 10%  could trigger automated email or Slack notifications, transforming the tool from passive monitoring into proactive incident detection.
+-Threshold-Based Alerting: The system currently stores metrics passively without triggering any notifications. Integrating a lightweight alerting mechanism  for example, a queries.sql job executed periodically that detects when memory_free drops below a defined threshold or cpu_idle falls under 10%  could trigger automated email or Slack notifications, transforming the tool from passive monitoring into proactive incident detection.

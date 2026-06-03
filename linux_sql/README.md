@@ -133,7 +133,8 @@ bash
 rocky:linux_sql [feature/monitoring_agent] $ crontab -l
 * * * * * bash /home/rocky/dev/jarvis_data_eng_AyoubManar/linux_sql/scripts/host_usage.sh localhost 5432 host_agent postgres password > /tmp/host_usage.log 2>&1
 Architecture
-https://./assets/architecture.png
+![Architecture du Cluster](./assets/architecture.png)
+
 
 Each Linux host in the cluster runs two monitoring agents that operate independently. On first deployment, host_info.sh collects static hardware metadata from the local machine using system commands (lscpu, /proc/cpuinfo, vmstat) and issues a single INSERT statement to the centralized database via the psql CLI. Subsequently, host_usage.sh executes every minute under crontab automation, capturing live resource metrics and appending a timestamped row to the host_usage table, with the source host resolved by a foreign key lookup on its fully qualified hostname. All three nodes converge on a single PostgreSQL instance running inside a Docker container (jrvs-psql), with data persisted to a named volume (pgdata) that survives container restarts and removals. The diagram above  saved under /assets  illustrates the full three-node topology, the per-host agent model, the crontab scheduling layer, and the containerized database sink.
 
@@ -214,10 +215,12 @@ Step 2  Data Insertion Verification: Immediately after running host_info.sh and 
 Step 3  Crontab Continuity Check: After configuring the crontab job, the /tmp/host_usage.log file was monitored over a 5-minute window to confirm that a new row was appended to host_usage at each scheduled interval, with incrementing timestamps and no error output.
 
 Résultat de host_info :
-https://./assets/test_host_info.png
+![Résultat de host_info](./assets/test_host_info.png)
+
 
 Résultat de host_usage :
-https://./assets/test_host_usage.png
+![Résultat de host_usage](./assets/test_host_usage.png)
+
 
 Deployment
 The deployment model relies on two complementary mechanisms: Docker for infrastructure isolation and crontab for process automation.

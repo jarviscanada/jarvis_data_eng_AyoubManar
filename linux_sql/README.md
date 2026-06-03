@@ -27,7 +27,7 @@ The architecture is agent-based. Each node in the cluster runs a pair of Bash sc
 
 Proof of execution:
 
-bash
+```bash
 rocky:linux_sql [feature/monitoring_agent] $ ./scripts/psql_docker.sh create
 ? docker.service - Docker Application Container Engine
      Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; preset: disabled)
@@ -46,16 +46,19 @@ TriggeredBy: ? docker.socket
 rocky:linux_sql [feature/monitoring_agent] $ docker ps -f name=jrvs-psql
 CONTAINER ID   IMAGE                 COMMAND                  CREATED      STATUS        PORTS                                         NAMES
 88ea7ef17f1f   postgres:9.6-alpine   "docker-entrypoint.s?"   6 days ago   Up 26 hours   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp   jrvs-psql
-2. Initialize the Database Schema
-bash
+```
+### 2. Initialize the Database Schema
+```bash
 # Connect to the psql instance and create the host_agent database
 psql -h localhost -U postgres -c "CREATE DATABASE host_agent;"
 
 # Execute the DDL script to create tables
 psql -h localhost -U postgres -d host_agent -f sql/ddl.sql
+```
+
 Proof of execution:
 
-bash
+```bash
 rocky:linux_sql [feature/monitoring_agent] $ psql -h localhost -U postgres -d host_agent -c "\dt"
 Password for user postgres: 
            List of relations
@@ -64,15 +67,17 @@ Password for user postgres:
  public | host_info  | table | postgres
  public | host_usage | table | postgres
 (2 rows)
-3. Collect Hardware Specifications (run once per host)
-bash
+```
+### 3. Collect Hardware Specifications (run once per host)
+```bash
 ./scripts/host_info.sh <psql_host> <psql_port> <db_name> <psql_user> <psql_password>
 
 # Example
 ./scripts/host_info.sh localhost 5432 host_agent postgres password
+```
 Proof of execution:
 
-bash
+```bash
 rocky:linux_sql [feature/monitoring_agent] $ psql -h localhost -U postgres -d host_agent -c "SELECT * FROM host_info;"
 Password for user postgres: 
  id |                                   hostname                                   | cpu_number | cpu_architecture |                cpu_model            | cpu_mhz | l2_cache |      timestamp      | total_mem 
@@ -81,15 +86,17 @@ Password for user postgres:
   2 | noe1                                                                         |          1 | x86_64           | Intel(R) Xeon(R) CPU @ 2.30GHz       |    2300 |      256 | 2019-05-29 17:49:53 |    601324
   3 | noe2                                                                         |          1 | x86_64           | Intel(R) Xeon(R) CPU @ 2.30GHz       |    2300 |      256 | 2019-05-29 17:49:53 |    601324
 (3 rows)
-4. Collect Resource Usage (run once to verify, then automate)
-bash
+```
+### 4. Collect Resource Usage (run once to verify, then automate)
+```bash
 bash scripts/host_usage.sh <psql_host> <psql_port> <db_name> <psql_user> <psql_password>
 
 # Example
 bash scripts/host_usage.sh localhost 5432 host_agent postgres password
+```
 Proof of execution:
 
-bash
+```bash
 15:48:00 rocky:linux_sql [feature/monitoring_agent] $ psql -h localhost -U postgres -d host_agent -c "SELECT * FROM host_usage;"
 Password for user postgres: 
       timestamp      | host_id | memory_free | cpu_idle | cpu_kernel | disk_io | disk_available 
@@ -120,8 +127,9 @@ Password for user postgres:
  2026-06-02 19:37:01 |       1 |        2008 |       96 |          2 |       0 |          12553
  2026-06-02 19:38:01 |       1 |        2007 |       96 |          2 |       0 |          12553
  2026-06-02 19:39:01 |       1 |        1902 |       96 |          2 |       0 |          12552
-5. Automate with Crontab
-bash
+```
+### 5. Automate with Crontab
+```bash
 # Open the crontab editor
 crontab -e
 
@@ -130,13 +138,16 @@ crontab -e
 
 # Verify the scheduled job
 crontab -l
+```
 Proof of execution:
 
-bash
+```bash
 rocky:linux_sql [feature/monitoring_agent] $ crontab -l
 * * * * * bash /home/rocky/dev/jarvis_data_eng_AyoubManar/linux_sql/scripts/host_usage.sh localhost 5432 host_agent postgres password > /tmp/host_usage.log 2>&1
+```
+
 Architecture
-https://./assets/architecture.png ![Architecture du Cluster](./assets/architecture.png)
+[Architecture du Cluster](./assets/architecture.png)
 
 Each Linux host in the cluster runs two monitoring agents that operate independently. On first deployment, host_info.sh collects static hardware metadata from the local machine using system commands (lscpu, /proc/cpuinfo, vmstat) and issues a single INSERT statement to the centralized database via the psql CLI. Subsequently, host_usage.sh executes every minute under crontab automation, capturing live resource metrics and appending a timestamped row to the host_usage table, with the source host resolved by a foreign key lookup on its fully qualified hostname. All three nodes converge on a single PostgreSQL instance running inside a Docker container (jrvs-psql), with data persisted to a named volume (pgdata) that survives container restarts and removals. The diagram above  saved under /assets  illustrates the full three-node topology, the per-host agent model, the crontab scheduling layer, and the containerized database sink.
 
@@ -144,7 +155,7 @@ Scripts
 psql_docker.sh
 Provisions, starts, or stops the jrvs-psql Docker container running PostgreSQL 9.6. Validates Docker service availability before any operation and returns descriptive error messages on invalid state transitions (e.g., attempting to create an already-existing container).
 
-bash
+```bash
 # Usage
 ./scripts/psql_docker.sh start|stop|create [db_username] [db_password]
 
@@ -152,36 +163,41 @@ bash
 ./scripts/psql_docker.sh create postgres mypassword
 ./scripts/psql_docker.sh start
 ./scripts/psql_docker.sh stop
+```
 host_info.sh
 Collects static hardware specifications from the local host (CPU count, architecture, model, clock speed, L2 cache, total memory, hostname) and inserts a single record into the host_info table. Intended to run once per node at provisioning time.
 
-bash
+```bash
 # Usage
 ./scripts/host_info.sh <psql_host> <psql_port> <db_name> <psql_user> <psql_password>
 
 # Example
 ./scripts/host_info.sh localhost 5432 host_agent postgres password
+```
 host_usage.sh
 Captures real-time resource metrics (free memory, CPU idle/kernel percentages, disk I/O operations, available disk space) and appends a timestamped record to the host_usage table. Designed to run every minute via crontab.
 
-bash
+```bash
 # Usage
 bash scripts/host_usage.sh <psql_host> <psql_port> <db_name> <psql_user> <psql_password>
 
 # Example
 bash scripts/host_usage.sh localhost 5432 host_agent postgres password
+```
 crontab configuration
 Schedules host_usage.sh for continuous, unattended execution at one-minute intervals, redirecting output to a log file for operational traceability.
 
-bash
+```bash
 # Crontab entry
 * * * * * bash /home/rocky/dev/jarvis_data_eng_<your_name>/linux_sql/scripts/host_usage.sh localhost 5432 host_agent postgres password > /tmp/host_usage.log 2>&1
+```
 queries.sql
 Contains analytical SQL queries targeting the host_agent database. Business objectives include detecting nodes with memory usage anomalies, identifying underutilized hosts for workload rebalancing, and computing average CPU idle time per node over a rolling time window.
 
-bash
+```bash
 # Execute queries against the host_agent database
 psql -h localhost -U postgres -d host_agent -f sql/queries.sql
+```
 Database Modeling
 Table: host_info
 Stores static hardware specifications collected once per host at provisioning time.

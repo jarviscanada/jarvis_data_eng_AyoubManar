@@ -144,7 +144,9 @@ crontab -l
 ```bash
 rocky:linux_sql [feature/monitoring_agent] $ crontab -l
 * * * * * bash /home/rocky/dev/jarvis_data_eng_AyoubManar/linux_sql/scripts/host_usage.sh localhost 5432 host_agent postgres password > /tmp/host_usage.log 2>&1
+
 ```
+
 ---
 
 

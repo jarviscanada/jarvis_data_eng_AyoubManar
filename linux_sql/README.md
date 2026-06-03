@@ -22,6 +22,9 @@ The architecture is agent-based. Each node in the cluster runs a pair of Bash sc
 
 # Stop a running container
 ./scripts/psql_docker.sh stop
+```
+
+
 Proof of execution:
 
 bash

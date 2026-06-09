@@ -4,8 +4,7 @@
 CREATE DATABASE exercises;
 \c exercises
 CREATE SCHEMA cd;
-
-
+ 
 
 -- Dumped from database version 9.2.0
 -- Dumped by pg_dump version 9.2.0

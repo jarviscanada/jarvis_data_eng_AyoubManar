@@ -1,248 +1,324 @@
 -- ==========================================
 -- Section: Modifying Data
 -- ==========================================
-
---1. Show all members
-
-
-SELECT *
-FROM cd.members
-
-
---2. Adding a new facility - a spa
-
-
-insert into cd.facilities
-values
+--1. Adding a new facility - a spa
+insert into cd.facilities 
+values 
   (9, 'Spa', 20, 30, 100000, 800);
-
-
-
---3. Adding a new facility - with automatic value for the next facid
-
-
-insert into cd.facilities
-select
+--2. Adding a new facility - with automatic value for the next facid
+insert into cd.facilities 
+select 
   (
-    select
-      max(facid)
-    from
+    select 
+      max(facid) 
+    from 
       cd.facilities
-  )+ 1,
-  'Spa',
-  20,
-  30,
-  100000,
+  )+ 1, 
+  'Spa', 
+  20, 
+  30, 
+  100000, 
   800;
-
-
---Question 4. Alter the data to fix the error 
-
-
-update
-  cd.facilities
-set
-  initialoutlay = 10000
-where
+--3. Alter the data to fix the error
+update 
+  cd.facilities 
+set 
+  initialoutlay = 10000 
+where 
   facid = 1;
-
-
---5.  Alter the price of the second tennis court so that it costs 10% more than the first one
-
-
-update
-  cd.facilities f
-set
-  membercost = f1.membercost * 1.1,
-  guestcost = f1.guestcost * 1.1
-from
-  cd.facilities f1
-where
-  f.name = 'Tennis Court 2'
+--4. Alter the price of the second tennis court so that it costs 10% more than the first one
+update 
+  cd.facilities f 
+set 
+  membercost = f1.membercost * 1.1, 
+  guestcost = f1.guestcost * 1.1 
+from 
+  cd.facilities f1 
+where 
+  f.name = 'Tennis Court 2' 
   and f1.name = 'Tennis Court 1';
-
-
---6. Delete all bookings
-
- 
-delete from
+--5. Delete all bookings
+delete from 
   cd.bookings;
-
-
---7. Remove member 37, who has never made a booking
-
-
-delete from
-  cd.members
-where
+--6. Remove member 37, who has never made a booking
+delete from 
+  cd.members 
+where 
   memid = 37;
-
-
-
 -- ==========================================
 -- Section: Basics
 -- ==========================================
 
 -- 1. Where Filter
-
-SELECT * FROM cd.facilities WHERE membercost > 0;
-
-  
+select 
+  facid, 
+  name, 
+  membercost, 
+  monthlymaintenance 
+from 
+  cd.facilities 
+where 
+  membercost > 0 
+  and membercost < monthlymaintenance / 50;
 -- 2. Where Filter (Calculated)
-
-SELECT * FROM cd.facilities
-WHERE membercost > 0
-  AND membercost < (monthlymaintenance / 50.0);
-
-
+SELECT 
+  * 
+FROM 
+  cd.facilities 
+WHERE 
+  name LIKE '%Tennis%';
 -- 3. Where Filter (Specific)
-
-SELECT * FROM cd.facilities
-WHERE name IN ('Tennis Court 1', 'Tennis Court 2');
-
-
+select 
+  * 
+from 
+  cd.facilities 
+where 
+  facid in (1, 5);
 -- 4. Where Date
-
-SELECT * FROM cd.members
-WHERE joindate >= '2012-09-01';
-
-
+select 
+  memid, 
+  surname, 
+  firstname, 
+  joindate 
+from 
+  cd.members 
+where 
+  joindate >= '2012-09-01';
 -- 5. Union
-
-SELECT surname FROM cd.members
-UNION
-SELECT name FROM cd.facilities;
-
-
+select 
+  surname 
+from 
+  cd.members 
+union 
+select 
+  name 
+from 
+  cd.facilities;
 -- ==========================================
 -- Section: Join
 -- ==========================================
 
 -- 1. Simple Join
-
-SELECT b.starttime 
-FROM cd.bookings b
-INNER JOIN cd.members m ON b.memid = m.memid
-WHERE m.firstname = 'David' AND m.surname = 'Farrell';
-
-
+select 
+  b.starttime 
+from 
+  cd.bookings b 
+  join cd.members m on m.memid = b.memid 
+where 
+  m.firstname = 'David' 
+  and m.surname = 'Farrell';
 -- 2. Simple Join 2
-
-SELECT b.starttime 
-FROM cd.bookings b
-INNER JOIN cd.facilities f ON b.facid = f.facid
-WHERE f.name = 'Tennis Court 1'
-  AND b.starttime >= '2012-09-21'
-  AND b.starttime < '2012-09-22'
-ORDER BY b.starttime;
-
-
+select 
+  b.starttime as start, 
+  f.name as name 
+from 
+  cd.facilities f 
+  inner join cd.bookings b on f.facid = b.facid 
+where 
+  f.name like 'Tennis%' 
+  and b.starttime >= '2012-09-21' 
+  and b.starttime < '2012-09-22' 
+order by 
+  b.starttime;
 -- 3. Self Join
-
-SELECT m1.firstname AS memfname, m1.surname AS memsname, 
-       m2.firstname AS recfname, m2.surname AS recsname
-FROM cd.members m1
-LEFT JOIN cd.members m2 ON m1.recommendedby = m2.memid
-ORDER BY memsname, memfname;
-
-
+select 
+  m.firstname as memfname, 
+  m.surname as memsname, 
+  r.firstname as recfname, 
+  r.surname as recsname 
+from 
+  cd.members m 
+  left outer join cd.members r on r.memid = m.recommendedby 
+order by 
+  memsname, 
+  memfname;
 -- 4. Self Join (Three Joins)
-
-SELECT DISTINCT m2.firstname, m2.surname
-FROM cd.members m1
-INNER JOIN cd.members m2 ON m1.recommendedby = m2.memid
-ORDER BY m2.surname, m2.firstname;
-
-
+select 
+  distinct r.firstname as firstname, 
+  r.surname as surname 
+from 
+  cd.members m 
+  join cd.members r on r.memid = m.recommendedby 
+order by 
+  surname, 
+  firstname;
 -- 5. Subquery and Join
-
-SELECT DISTINCT m2.firstname, m2.surname
-FROM cd.members m1
-INNER JOIN cd.members m2 ON m1.recommendedby = m2.memid
-ORDER BY m2.surname, m2.firstname;
-
-
-
+select 
+  distinct m.firstname || ' ' || m.surname as member, 
+  (
+    select 
+      r.firstname || ' ' || r.surname as recomender 
+    from 
+      cd.members r 
+    where 
+      r.memid = m.recommendedby
+  ) 
+from 
+  cd.members m 
+order by 
+  member;
 -- ==========================================
 -- Section: Aggregation
 -- ==========================================
 
 -- 1. Group By & Order By
-
-SELECT facid, COUNT(*) FROM cd.bookings GROUP BY facid;
-
-
--- 2. Group By (Facility Hours)
-
-SELECT facid, SUM(slots) AS "Total Slots" FROM cd.bookings GROUP BY facid ORDER BY facid;
-
-
--- 3. Group By (Monthly)
-
-SELECT facid, SUM(slots) AS "Total Slots" FROM cd.bookings 
-WHERE starttime >= '2012-09-01' AND starttime < '2012-10-01' GROUP BY facid;
-
-
+select 
+  recommendedby, 
+  count(*) 
+from 
+  cd.members 
+where 
+  recommendedby is not null 
+group by 
+  recommendedby 
+order by 
+  recommendedby;
+-- 2. Group By 
+select 
+  facid, 
+  sum(slots) as "Total Slots" 
+from 
+  cd.bookings 
+group by 
+  facid 
+order by 
+  facid;
+-- 3. Group By with condition
+select 
+  facid, 
+  sum(slots) as "Total Slots" 
+from 
+  cd.bookings 
+where 
+  starttime >= '2012-09-01' 
+  and starttime < '2012-10-01' 
+group by 
+  facid 
+order by 
+  sum(slots);
 -- 4. Group By (Multi-column)
-
-SELECT facid, EXTRACT(month FROM starttime) AS month, SUM(slots) AS "Total Slots" 
-FROM cd.bookings GROUP BY facid, month ORDER BY facid, month;
-
-
+select 
+  facid, 
+  extract(
+    month 
+    from 
+      starttime
+  ) as month, 
+  sum(slots) as "Total Slots" 
+from 
+  cd.bookings 
+where 
+  extract(
+    year 
+    from 
+      starttime
+  ) = 2012 
+group by 
+  facid, 
+  month 
+order by 
+  facid, 
+  month;
 -- 5. Count Distinct
-
-SELECT COUNT(DISTINCT memid) FROM cd.bookings;
-
-
+select 
+  count(*) 
+from 
+  (
+    select 
+      distinct memid 
+    from 
+      cd.bookings
+  );
 -- 6. Group By (Multiple Cols, Join)
-
-SELECT f.name, SUM(b.slots) AS total_slots 
-FROM cd.bookings b 
-JOIN cd.facilities f ON b.facid = f.facid 
-GROUP BY f.name HAVING SUM(b.slots) > 1000;
-
-
--- 7. Window Function (Rank)
-
-SELECT name, RANK() OVER (ORDER BY SUM(slots) DESC) 
-FROM cd.bookings b JOIN cd.facilities f ON b.facid = f.facid GROUP BY name;
-
-
--- 8. Window Function (Filter Rank)
-
-SELECT name, rank FROM (
-    SELECT name, RANK() OVER (ORDER BY SUM(slots) DESC) as rank 
-    FROM cd.bookings b JOIN cd.facilities f ON b.facid = f.facid GROUP BY name
-) as ranked WHERE rank = 3;
-
-
--- 9. Window Function (Facility Hours 4)
-
-SELECT name, ROUND(SUM(slots) * 100.0 / SUM(SUM(slots)) OVER (), 1) as percent 
-FROM cd.bookings b JOIN cd.facilities f ON b.facid = f.facid GROUP BY name;
-
-
-
+select 
+  m.surname, 
+  m.firstname, 
+  m.memid, 
+  min(b.starttime) as starttime 
+from 
+  cd.members m 
+  join cd.bookings b on m.memid = b.memid 
+where 
+  starttime >= '2012-09-01' 
+group by 
+  m.surname, 
+  m.firstname, 
+  m.memid 
+order by 
+  memid;
+-- 7. Window Function 
+select 
+  (
+    select 
+      count(*) 
+    from 
+      cd.members
+  ), 
+  firstname, 
+  surname 
+from 
+  cd.members 
+order by 
+  joindate;
+-- 8. Window Function 
+select 
+  row_number() over(
+    order by 
+      joindate
+  ), 
+  firstname, 
+  surname 
+from 
+  cd.members 
+order by 
+  joindate;
+-- 9. Window Function, subquery
+select 
+  facid, 
+  total 
+from 
+  (
+    select 
+      facid, 
+      sum(slots) as total, 
+      rank() over (
+        order by 
+          sum(slots) desc
+      ) as rank 
+    from 
+      cd.bookings 
+    group by 
+      facid
+  ) 
+where 
+  rank = 1;
 -- ==========================================
 -- Section: String
 -- ==========================================
 
 -- 1. Format String (Concat)
-
-SELECT surname || ', ' || firstname AS name
-FROM cd.members;
-
-
+select 
+  surname || ', ' || firstname as name 
+from 
+  cd.members;
 -- 2. WHERE + String function (Regex/Like)
-
-SELECT * FROM cd.members
-WHERE surname LIKE 'B%';
-
-
+select 
+  memid, 
+  telephone 
+from 
+  cd.members 
+where 
+  telephone ~ '[()]' 
+order by 
+  memid;
 -- 3. Substr
-
-SELECT DISTINCT SUBSTR(surname, 1, 1) AS letter
-FROM cd.members
-ORDER BY letter;
-
+SELECT 
+  SUBSTR(surname, 1, 1) AS letter, 
+  COUNT(*) AS count 
+FROM 
+  cd.members 
+GROUP BY 
+  letter 
+ORDER BY 
+  letter;
 

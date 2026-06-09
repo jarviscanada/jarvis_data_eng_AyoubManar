@@ -47,7 +47,7 @@ CREATE TABLE cd.bookings (
         FOREIGN KEY (memid) REFERENCES cd.members(memid)
 );
 
-
+```
 
 ## Modifying Data
 

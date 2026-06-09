@@ -1,10 +1,12 @@
 -- ==========================================
 -- Section: Modifying Data
 -- ==========================================
+
 --1. Adding a new facility - a spa
 insert into cd.facilities 
 values 
   (9, 'Spa', 20, 30, 100000, 800);
+
 --2. Adding a new facility - with automatic value for the next facid
 insert into cd.facilities 
 select 
@@ -19,6 +21,7 @@ select
   30, 
   100000, 
   800;
+
 --3. Alter the data to fix the error
 update 
   cd.facilities 
@@ -26,6 +29,7 @@ set
   initialoutlay = 10000 
 where 
   facid = 1;
+
 --4. Alter the price of the second tennis court so that it costs 10% more than the first one
 update 
   cd.facilities f 
@@ -37,14 +41,17 @@ from
 where 
   f.name = 'Tennis Court 2' 
   and f1.name = 'Tennis Court 1';
+
 --5. Delete all bookings
 delete from 
   cd.bookings;
+
 --6. Remove member 37, who has never made a booking
 delete from 
   cd.members 
 where 
   memid = 37;
+
 -- ==========================================
 -- Section: Basics
 -- ==========================================
@@ -60,6 +67,7 @@ from
 where 
   membercost > 0 
   and membercost < monthlymaintenance / 50;
+
 -- 2. Where Filter (Calculated)
 SELECT 
   * 
@@ -67,6 +75,7 @@ FROM
   cd.facilities 
 WHERE 
   name LIKE '%Tennis%';
+
 -- 3. Where Filter (Specific)
 select 
   * 
@@ -74,6 +83,7 @@ from
   cd.facilities 
 where 
   facid in (1, 5);
+
 -- 4. Where Date
 select 
   memid, 
@@ -84,6 +94,7 @@ from
   cd.members 
 where 
   joindate >= '2012-09-01';
+
 -- 5. Union
 select 
   surname 
@@ -94,6 +105,7 @@ select
   name 
 from 
   cd.facilities;
+
 -- ==========================================
 -- Section: Join
 -- ==========================================
@@ -107,6 +119,7 @@ from
 where 
   m.firstname = 'David' 
   and m.surname = 'Farrell';
+
 -- 2. Simple Join 2
 select 
   b.starttime as start, 
@@ -120,6 +133,7 @@ where
   and b.starttime < '2012-09-22' 
 order by 
   b.starttime;
+
 -- 3. Self Join
 select 
   m.firstname as memfname, 
@@ -132,6 +146,7 @@ from
 order by 
   memsname, 
   memfname;
+
 -- 4. Self Join (Three Joins)
 select 
   distinct r.firstname as firstname, 
@@ -142,6 +157,7 @@ from
 order by 
   surname, 
   firstname;
+
 -- 5. Subquery and Join
 select 
   distinct m.firstname || ' ' || m.surname as member, 
@@ -157,6 +173,7 @@ from
   cd.members m 
 order by 
   member;
+
 -- ==========================================
 -- Section: Aggregation
 -- ==========================================
@@ -183,6 +200,7 @@ group by
   facid 
 order by 
   facid;
+
 -- 3. Group By with condition
 select 
   facid, 
@@ -196,6 +214,7 @@ group by
   facid 
 order by 
   sum(slots);
+
 -- 4. Group By (Multi-column)
 select 
   facid, 
@@ -219,6 +238,7 @@ group by
 order by 
   facid, 
   month;
+
 -- 5. Count Distinct
 select 
   count(*) 
@@ -229,6 +249,7 @@ from
     from 
       cd.bookings
   );
+
 -- 6. Group By (Multiple Cols, Join)
 select 
   m.surname, 
@@ -246,6 +267,7 @@ group by
   m.memid 
 order by 
   memid;
+
 -- 7. Window Function 
 select 
   (
@@ -260,6 +282,7 @@ from
   cd.members 
 order by 
   joindate;
+
 -- 8. Window Function 
 select 
   row_number() over(
@@ -272,6 +295,7 @@ from
   cd.members 
 order by 
   joindate;
+
 -- 9. Window Function, subquery
 select 
   facid, 
@@ -292,6 +316,7 @@ from
   ) 
 where 
   rank = 1;
+
 -- ==========================================
 -- Section: String
 -- ==========================================
@@ -301,6 +326,7 @@ select
   surname || ', ' || firstname as name 
 from 
   cd.members;
+
 -- 2. WHERE + String function (Regex/Like)
 select 
   memid, 
@@ -311,6 +337,7 @@ where
   telephone ~ '[()]' 
 order by 
   memid;
+
 -- 3. Substr
 SELECT 
   SUBSTR(surname, 1, 1) AS letter, 

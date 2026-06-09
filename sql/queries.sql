@@ -86,7 +86,7 @@ where
 -- 1. Where Filter
 
 SELECT * FROM cd.facilities WHERE membercost > 0;
-```
+
   
 -- 2. Where Filter (Calculated)
 

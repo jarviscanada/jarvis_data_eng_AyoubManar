@@ -11,7 +11,7 @@ CREATE SCHEMA IF NOT EXISTS cd;
 
 ### 2. Tables
 
-```
+```sql
 -- Création des tables
 CREATE TABLE cd.members (
     memid INTEGER PRIMARY KEY,

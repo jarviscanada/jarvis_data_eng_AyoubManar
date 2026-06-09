@@ -65,111 +65,116 @@ CREATE TABLE cd.bookings (
 
 ### 4. Update (Calculated)
 - **Objective:** Increase costs for "Tennis Court 2" by 10% based on "Tennis Court 1" values.
-- **Solution:** Used subqueries within the `SET` statement to fetch current values from `facid = 0` and perform the calculation.
+- **Solution:** Used a `FROM` join in the `UPDATE` statement to reference "Tennis Court 1" values and perform the calculation.
 
 ### 5. Delete (All)
 - **Objective:** Remove all entries from the `cd.bookings` table.
 - **Solution:** Executed `DELETE FROM cd.bookings;`.
 
 ### 6. Delete (Condition)
-- **Objective:** Delete member 37 who has no booking history.
-- **Solution:** Used `DELETE FROM cd.members WHERE memid = 37;`. Note: This operation respects foreign key constraints and would fail if the member had existing bookings.
+- **Objective:** Remove member 37, who has never made a booking.
+- **Solution:** Used `DELETE FROM cd.members WHERE memid = 37;`.
+
+---
 
 ## Basics
 
 ### 1. Where Filter
 - **Objective:** Filter facilities with specific cost criteria.
-- **Solution:** Used `WHERE` with multiple conditions (`membercost > 0` and `membercost < monthlymaintenance/50.0`) to select facilities based on maintenance costs.
+- **Solution:** Used `WHERE` with multiple conditions to select facilities where member costs are non-zero and below a specific maintenance threshold.
 
-### 2. Where Filter (Multi-line)
-- **Objective:** Select all columns for all facilities with a `membercost` greater than 0 and less than 1/50th of the `monthlymaintenance` cost.
-- **Solution:** Used a filter condition `membercost < (monthlymaintenance / 50.0)` to perform a dynamic calculation per row.
+### 2. Where Filter (Calculated)
+- **Objective:** Select all columns for facilities containing "Tennis" in the name.
+- **Solution:** Used `LIKE '%Tennis%'` to perform pattern matching on the name column.
 
 ### 3. Where Filter (Specific)
 - **Objective:** Work with a list of specific items.
-- **Solution:** Used the `IN` operator to filter for facilities where the name is 'Tennis Court 1' or 'Tennis Court 2'.
+- **Solution:** Used the `IN` operator to filter for facilities where the `facid` is 1 or 5.
 
 ### 4. Where Date
-- **Objective:** Retrieve members who joined after a specific date.
-- **Solution:** Used `WHERE joindate >= '2012-09-01';` utilizing SQL's standard ISO date format.
+- **Objective:** Retrieve members who joined on or after `'2012-09-01'`.
+- **Solution:** Used `WHERE joindate >= '2012-09-01'`.
 
 ### 5. Union
 - **Objective:** Combine name lists from different tables.
-- **Solution:** Used `UNION` to merge result sets. Note that `UNION` removes duplicates by default; `UNION ALL` would be required if keeping all records was necessary.
+- **Solution:** Used `UNION` to merge the surnames from members and names from facilities.
 
+---
 
 ## Join
 
 ### 1. Simple Join
-- **Objectif :** Récupérer les heures de réservation pour le membre 'David Farrell'.
-- **Solution :** Utilisation d'une `INNER JOIN` entre `cd.bookings` et `cd.members` via la clé commune `memid` avec une condition `WHERE` sur le nom du membre.
+- **Objective:** Retrieve the booking start times for member 'David Farrell'.
+- **Solution:** Used an `INNER JOIN` between `cd.bookings` and `cd.members` on the `memid` key.
 
 ### 2. Simple Join 2
-- **Objectif :** Récupérer les heures de réservation pour le 'Tennis Court 1' à une date précise.
-- **Solution :** Utilisation d'une `INNER JOIN` entre `cd.bookings` et `cd.facilities` via `facid`, filtrée par le nom de l'installation et la plage horaire.
+- **Objective:** Retrieve booking start times for facilities starting with 'Tennis' on a specific date.
+- **Solution:** Used `INNER JOIN` between `cd.bookings` and `cd.facilities` on `facid`, filtered by name and a specific date range.
 
-### 3. Self Join (Three Joins)
-- **Objectif :** Lister tous les membres et le nom de la personne qui les a recommandés.
-- **Solution :** Utilisation d'une `LEFT JOIN` de `cd.members` sur elle-même (alias `m1` et `m2`) pour associer le `recommendedby` au `memid` correspondant.
+### 3. Self Join
+- **Objective:** List all members and the name of the person who recommended them.
+- **Solution:** Used a `LEFT OUTER JOIN` of `cd.members` on itself to associate `recommendedby` with the corresponding `memid`.
 
-### 4. Self Join (Three Joins - 2)
-- **Objectif :** Produire une liste triée de tous les membres qui ont recommandé au moins un autre membre.
-- **Solution :** Utilisation d'une `INNER JOIN` (ou `DISTINCT`) pour lier les membres qui apparaissent dans la colonne `recommendedby`.
+### 4. Self Join (Three Joins)
+- **Objective:** Produce a sorted list of all members who have recommended at least one other member.
+- **Solution:** Used `DISTINCT` and an `INNER JOIN` to link members who appear in the `recommendedby` column.
 
 ### 5. Subquery and Join
-- **Objectif :** Trouver tous les membres qui ont recommandé au moins un membre.
-- **Solution :** Utilisation d'une jointure avec une sous-requête pour filtrer uniquement les membres ayant effectué une recommandation.
+- **Objective:** Display member names alongside their recommender's name.
+- **Solution:** Used a correlated subquery in the `SELECT` clause to fetch the recommender's name.
 
+---
 
 ## Aggregation
 
 ### 1. Group By & Order By
-- **Objective:** Count the number of bookings per facility.
-- **Solution:** Used `GROUP BY facid` with `COUNT(*)`.
+- **Objective:** Count the number of recommendations per member.
+- **Solution:** Used `GROUP BY recommendedby` with `COUNT(*)` to count references, excluding NULL values.
 
-### 2. Group By (Facility Hours)
+### 2. Group By
 - **Objective:** Calculate total slots booked per facility.
 - **Solution:** Used `SUM(slots)` grouped by `facid`.
 
-### 3. Group By (Monthly)
+### 3. Group By with Condition
 - **Objective:** Calculate total slots per facility for September 2012.
-- **Solution:** Used `WHERE` filtering on `starttime` with `GROUP BY facid`.
+- **Solution:** Used `WHERE` to filter by `starttime` before performing the `GROUP BY facid`.
 
 ### 4. Group By (Multi-column)
-- **Objective:** Total slots per facility per month.
-- **Solution:** Used `GROUP BY facid, EXTRACT(month FROM starttime)`.
+- **Objective:** Calculate total slots per facility per month for the year 2012.
+- **Solution:** Used `EXTRACT(month FROM starttime)` and grouped by both `facid` and the calculated month.
 
 ### 5. Count Distinct
-- **Objective:** Count number of unique members who booked.
-- **Solution:** Used `COUNT(DISTINCT memid)`.
+- **Objective:** Count the number of unique members who have booked.
+- **Solution:** Used `COUNT(DISTINCT memid)` within a subquery on the bookings table.
 
 ### 6. Group By (Multiple Cols, Join)
-- **Objective:** List facilities with more than 1000 slots booked.
-- **Solution:** Used `GROUP BY` with `HAVING SUM(slots) > 1000`.
+- **Objective:** Find the earliest booking start time per member.
+- **Solution:** Joined members and bookings, grouping by member details and using `MIN(starttime)`.
 
-### 7. Window Function (Count Members)
-- **Objective:** Rank facilities by usage.
-- **Solution:** Used `RANK()` window function.
+### 7. Window Function
+- **Objective:** Retrieve the total member count alongside individual member details.
+- **Solution:** Used a subquery `(SELECT count(*) FROM cd.members)` to include the total count in every result row.
 
-### 8. Window Function (Num Members)
-- **Objective:** Find the 3rd most used facility.
-- **Solution:** Used `RANK()` or `ROW_NUMBER()` in a subquery to filter by rank.
+### 8. Window Function
+- **Objective:** Generate row numbers for members ordered by their join date.
+- **Solution:** Used `ROW_NUMBER() OVER(ORDER BY joindate)`.
 
-### 9. Window Function/Subquery (Facility Hours 4)
-- **Objective:** Calculate facility usage relative to total usage.
-- **Solution:** Used a Common Table Expression (CTE) or subquery to get the total and divide per facility.
+### 9. Window Function, Subquery
+- **Objective:** Identify the most used facility.
+- **Solution:** Used `RANK()` in a subquery to order facilities by total slots and filtered for the top rank.
 
+---
 
 ## String
 
-### 1. Concat
-- **Objective:** Format a full name by concatenating the surname and firstname columns.
+### 1. Format String (Concat)
+- **Objective:** Combine surname and firstname into a single column.
 - **Solution:** Used the `||` operator to combine strings with a comma separator.
 
-### 2. Regex
-- **Objective:** Filter records using a pattern-matching string function.
-- **Solution:** Used `WHERE surname LIKE 'B%'` to select members whose surname starts with the letter 'B'.
+### 2. WHERE + String Function
+- **Objective:** Filter telephone numbers containing parentheses.
+- **Solution:** Used the regex operator `~` to match the pattern `[()]`.
 
 ### 3. Substr
-- **Objective:** Group or filter results using a substring of a column.
-- **Solution:** Used the `SUBSTR` function to extract the first letter of a name for grouping or filtering purposes.
+- **Objective:** Group members by the first letter of their surname.
+- **Solution:** Used `SUBSTR(surname, 1, 1)` to extract the first character for grouping.

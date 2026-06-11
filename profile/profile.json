@@ -42,7 +42,7 @@
   ],
   "jarvis_projects": [
     {
-      "description": "",
+      "description": "This lightweight monitoring solution provides real-time visibility into infrastructure health across a Linux cluster. By leveraging Bash for data collection, Docker for isolated PostgreSQL persistence, and crontab for automated telemetry, it captures and stores critical hardware and resource utilization metrics. The project offers a streamlined, dependency-free alternative to enterprise monitoring tools, enabling data-driven insights into node performance and capacity planning.",
       "git_url": "/linux_sql",
       "name": "Cluster Monitor"
     },

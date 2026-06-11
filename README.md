@@ -15,7 +15,7 @@ Dual Masters degree holder in Computer Science (UQAM & Hassan II University) wit
 Project source code: [https://github.com/jarviscanada/jarvis_data_eng_AyoubManar](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar)
 
 
-**Cluster Monitor** [[GitHub](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar/tree/master/linux_sql)]: Not Started
+**Cluster Monitor** [[GitHub](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar/tree/master/linux_sql)]: This lightweight monitoring solution provides real-time visibility into infrastructure health across a Linux cluster. By leveraging Bash for data collection, Docker for isolated PostgreSQL persistence, and crontab for automated telemetry, it captures and stores critical hardware and resource utilization metrics. The project offers a streamlined, dependency-free alternative to enterprise monitoring tools, enabling data-driven insights into node performance and capacity planning.
 
 **Python Data Analytics** [[GitHub](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar/tree/master/python_data_anlytics)]: Not Started
 

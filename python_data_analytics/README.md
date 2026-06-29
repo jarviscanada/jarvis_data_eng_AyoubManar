@@ -60,6 +60,36 @@ graph TD
     style K fill:#9cf,stroke:#333,stroke-width:2px
     style L fill:#9c9,stroke:#333,stroke-width:2px
 ```
+```mermaid
+graph TD
+    subgraph FrontEnd ["Front-end Stack"]
+        A[User Browser] --> B[CDN]
+        B --> C[Azure Blob Storage]
+        C --> D[Static Assets<br>HTML/CSS/JS]
+    end
+
+    subgraph APIStack ["API Stack (Backend)"]
+        E[LGS Web App] --> F[Azure API Management]
+        F --> G[AKS Cluster<br>Microservices]
+        G --> H[Azure SQL Server<br>OLTP]
+    end
+
+    subgraph DataAnalytics ["Data Analytics PoC"]
+        I[ETL Process<br>JDBC/ODBC] --> J[PostgreSQL<br>Data Warehouse (OLAP)]
+        J --> K[Jupyter Notebook<br>Data Wrangling & Analytics]
+        K --> L[RFM Segmentation<br>Visualisations<br>Insights]
+    end
+
+    H -->|Extract| I
+    L -->|Consumed by| E
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style E fill:#bbf,stroke:#333,stroke-width:2px
+    style K fill:#9cf,stroke:#333,stroke-width:2px
+    style L fill:#9c9,stroke:#333,stroke-width:2px
+```
+
+
 
 **High level components:**
 

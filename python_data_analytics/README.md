@@ -89,7 +89,8 @@ graph TD
 ### Data Analytics and Wrangling
 
 The complete analytical workflow is documented in the Jupyter notebook:  
-**`./python_data_wrangling/retail_data_analytics_wrangling.ipynb`**
+
+**[`retail_data_analytics_wrangling.ipynb`](./../python_data_wrangling/retail_data_analytics_wrangling.ipynb)**
 
 This notebook performs the following key tasks:
 

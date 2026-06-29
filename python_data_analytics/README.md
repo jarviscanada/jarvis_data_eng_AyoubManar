@@ -32,7 +32,7 @@ The insights derived from this project will directly support several strategic i
 
 The solution follows a modular, containerised architecture that separates data storage, processing, and analysis.
 
-```mermaid
+mermaid
 graph TD
     subgraph "Front-end Stack"
         A[User Browser] --> B[CDN]
@@ -59,7 +59,7 @@ graph TD
     style E fill:#bbf,stroke:#333,stroke-width:2px
     style K fill:#9cf,stroke:#333,stroke-width:2px
     style L fill:#9c9,stroke:#333,stroke-width:2px
-```
+
 **High level components:**
 
 1. **Data Sources**

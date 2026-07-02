@@ -15,9 +15,9 @@ Dual Masters degree holder in Computer Science (UQAM & Hassan II University) wit
 Project source code: [https://github.com/jarviscanada/jarvis_data_eng_AyoubManar](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar)
 
 
-**Cluster Monitor** [[GitHub](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar/tree/master/linux_sql)]: This lightweight monitoring solution provides real-time visibility into infrastructure health across a Linux cluster. By leveraging Bash for data collection, Docker for isolated PostgreSQL persistence, and crontab for automated telemetry, it captures and stores critical hardware and resource utilization metrics. The project offers a streamlined, dependency-free alternative to enterprise monitoring tools, enabling data-driven insights into node performance and capacity planning.
+**Cluster Monitor** [[GitHub](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar/tree/master/linux_sql)]: Architected a lightweight, agent-based monitoring solution for Linux clusters that provides real-time operational visibility. By orchestrating Bash-based telemetry and containerized PostgreSQL persistence via Docker, the system automates continuous hardware and resource utilization tracking. This streamlined, dependency-free framework replaces heavyweight enterprise tools, enabling proactive capacity planning and anomaly detection through structured SQL analysis.
 
-**Python Data Analytics** [[GitHub](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar/tree/master/python_data_anlytics)]: Not Started
+**Python Data Analytics** [[GitHub](https://github.com/jarviscanada/jarvis_data_eng_AyoubManar/tree/master/python_data_anlytics)]: Developed a Python-based data analytics proof-of-concept for LGS, a retail company, to transition from intuition-based to data-driven decision-making. Utilized Pandas for data wrangling and transformation, SQLAlchemy for PostgreSQL database connectivity, and Matplotlib/Seaborn for exploratory data analysis. Implemented RFM (Recency, Frequency, Monetary) modeling to segment customers, enabling targeted marketing strategies and improved revenue growth.
 
 
 ## Highlighted Projects

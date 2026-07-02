@@ -1,0 +1,128 @@
+# Preferred name (Characters only)
+name: "Ayoub Manar"
+# Your GitHub repo root URL
+github_repo_root_url: https://github.com/jarviscanada/jarvis_data_eng_AyoubManar
+
+# Introduce yourself, your academic and professional background.
+# What excites you about the software industry and your passion. At least 80 words
+summary: Dual Masters degree holder in Computer Science (UQAM & Hassan II University) with a strong passion for leveraging data to drive informed decision-making. Skilled in data integration, modeling, and visualization using Power BI, SQL, and Python, with hands-on experience in machine learning for predictive analytics.
+# Group your skills by level.
+# Your skills can be anything software related (e.g. language, frameworks, methodologies, software, etc.).
+skills:
+  # At least 5 skills
+  proficient:
+    - Python (Pandas, NumPy, Scikit-learn)
+    - SQL / RDBMS (SQL Server, MySQL)
+    - Power BI (DAX, Power Query)
+    - ETL / Data Warehousing (SSIS, SSAS)
+    - Apache Spark / PySpark
+    - Git
+  # At least 5 skills
+  competent:
+    - Databricks
+    - Hadoop (HDFS, MapReduce)
+    - HBase / NoSQL
+    - R / RStudio
+    - Machine Learning (Random Forest, KNN, K-Means, Regression)
+    - Linux / Bash
+  # At least 5 skills
+  familiar:
+    - Azure (Databricks, Fabric)
+    - Power Automate
+    - Java
+    - Microsoft Purview
+    - Agile / Scrum
+    - Tableau
+
+
+# List of Jarvis projects
+jarvis_projects:
+  - name: "Cluster Monitor"
+    git_url: "/linux_sql"
+    # The project description allows hiring managers to understand your project and technologies you used(e.g. programming languages, libraries, algorithms, hardware, tools, etc.).
+    # The project description must start with an action verb (https://bit.ly/3guO98u)
+    description: "Architected a lightweight, agent-based monitoring solution for Linux clusters that provides real-time operational visibility. By orchestrating Bash-based telemetry and containerized PostgreSQL persistence via Docker, the system automates continuous hardware and resource utilization tracking. This streamlined, dependency-free framework replaces heavyweight enterprise tools, enabling proactive capacity planning and anomaly detection through structured SQL analysis."
+  - name: "Python Data Analytics"
+    git_url: "/python_data_anlytics"
+    description: "Developed a Python-based data analytics proof-of-concept for LGS, a retail company, to transition from intuition-based to data-driven decision-making. Utilized Pandas for data wrangling and transformation, SQLAlchemy for PostgreSQL database connectivity, and Matplotlib/Seaborn for exploratory data analysis. Implemented RFM (Recency, Frequency, Monetary) modeling to segment customers, enabling targeted marketing strategies and improved revenue growth."
+
+# List of personal or academic projects
+# Feel free to add more projects
+highlighted_projects:
+  - name: "BI Reporting  ETL & OLAP Analysis"
+    git_url:
+    description: Developed a complete Business Intelligence solution using SSIS for multi-source ETL (AdventureWorks), built an OLAP cube with SSAS for multidimensional sales analysis (drill-down by region, product, and period), and created automated Power BI performance reports enabling comparative sales analysis by segment.
+
+  - name: "Exploratory Analysis  Dimensionality Reduction & Clustering"
+    git_url:
+    description: Analyzed multiple datasets (CarSales, TemperatureFrance, Iris) using IBM SPSS and RStudio. Applied Principal Component Analysis (PCA) to reduce dimensionality and identify key variables, then implemented K-Means and hierarchical clustering (CHA) algorithms to segment observations and extract meaningful patterns.
+
+  - name: "Restaurant Delivery Web & Mobile Platform"
+    git_url:
+    description: Designed, developed, and deployed a full-stack web and mobile platform to optimize restaurant delivery services. Built a PHP/MySQL backend, a responsive Bootstrap frontend, and an Android mobile app in Java/XML. Managed the full development lifecycle from requirements and UML design through testing and deployment.
+
+
+
+#List of professional experience
+#The job description allows hiring managers to understand your job and the technologies you used(e.g. programming languages, libraries, algorithms, hardware, tools, etc.).
+#The description must be more than 25 words. If your experience is not software related, please focus on soft skills and achievements (e.g. team collaboration, problem-solving, improvements, communication).
+professional_experience:
+  #Write your Jarvis role as a professional experience rather than training.
+  - title: "Machine Learning Engineer"
+    company: "Jarvis"
+    duration: "Apr 2026-present"
+    description: "Completed a series of hands-on data engineering projects covering Linux/SQL cluster monitoring, Python-based data analytics, distributed processing with Hadoop       and Spark, and cloud/DevOps practices. Worked in an Agile/Scrum environment with Git-based version control and peer code reviews."
+
+  - title: "Business Intelligence Analyst  Capstone Project (Master 2)"
+    company: "Université du Québec à Montréal & Groupe St-Amour (GSA)"
+    duration: "Jan 2024  Apr 2024"
+    description: "Designed and delivered a full BI prototype for GSA, including star schema data modeling, ETL pipeline implementation with SSIS, and interactive Power BI              dashboards using DAX and Power Query. Identified KPIs in collaboration with business stakeholders, ensured data quality and traceability throughout the pipeline, and validated     deliverables iteratively based on functional feedback."
+
+  - title: "Big Data Engineering Intern"
+    company: "Stellantis (Groupe PSA)"
+    duration: "Mar 2021  Aug 2021"
+    description: "Automated the processing of large-scale vehicle mission profiles in a distributed Big Data environment using Python, Apache Spark, and HBase. Developed robust ETL    pipelines for high-volume data extraction, transformation, and loading. Optimized Spark scripts to reduce processing times, and collaborated with technical teams to ensure data    quality, traceability, and integrity throughout the pipeline."
+
+  - title: "Teaching Assistant  Data Structures & Algorithms"
+    company: "Université du Québec à Montréal (UQAM)"
+    duration: "May 2022  Dec 2022"
+    description: "Led weekly hands-on workshops for groups of 20 to 30 students, explaining complex data structures (trees, graphs, hash tables) and algorithmic concepts. Produced     supplementary pedagogical materials and detailed answer keys. Also served as grading assistant for a Concurrent & Parallel Programming course, providing constructive feedback      and ensuring evaluation consistency."
+
+
+
+#List of edcuation
+education:
+  - school_name: "Université du Québec à Montréal (UQAM)"
+    duration: "2022-2024"
+    degree: "Master of Science in Computer Science"
+    department: "Data Intelligence & Management"
+    awards_achievements:
+
+  - school_name: "Université Hassan II, Casablanca"
+    duration: "2019-2021"
+    degree: "Specialized Master"
+    department: "Big Data & Cloud Computing"
+    awards_achievements:
+
+  - school_name: "Université Hassan II, Casablanca"
+    duration: "2016-2019"
+    degree: "Bachelor of Science"
+    department: "Mathematics & Computer Science  Decision Support"
+    awards_achievements:
+
+
+#Optional section
+others:
+    - title: "Certifications"
+      bullets:
+        - "Knowledge Badge AI/BI for Data Analysts · Databricks Academy"
+        - "Knowledge Badge SQL Analytics on Databricks · Databricks Academy"
+    - title: "Languages"
+      bullets:
+        - "Arabic (Native)"
+        - "English (Fluent)"
+        - "French (Fluent)"
+    - title: "Activities/Hobbies"
+      bullets:
+        - "Fishing"
+        - "Snoocker"
